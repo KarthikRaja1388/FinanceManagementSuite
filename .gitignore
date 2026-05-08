@@ -1,0 +1,78 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Environment variables
+.env
+.env.*
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Static files
+staticfiles/
+
+# Media files
+media/
+
+# Django migrations (optional)
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Coverage / testing
+htmlcov/
+.coverage
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# Node modules (if using React/frontend)
+node_modules/
+
+# Build files
+dist/
+build/
+
+# Secret files
+*.pem
+*.key
+
+# Logs
+logs/
+*.log
+
+# Cache
+.cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Docker
+*.pid
+
+# Terraform
+*.tfstate
+*.tfstate.*

@@ -1,0 +1,296 @@
+/* =========================
+   GLOBAL RESET / BASE
+========================= */
+body {
+    background-color: #f5f7f9;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    margin: 0;
+}
+
+/* =========================
+   NAVBAR (MUI AppBar style)
+========================= */
+.navbar {
+    height: 100px;
+    background-color: #ffffff;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.12),
+                0px 1px 2px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position:sticky;
+    top:0;
+    z-index: 1000;
+}
+.navbar>div{
+    padding:0;
+}
+/* Brand logo */
+#brand-logo {
+    height: 100px;
+    width:200px;
+    margin-right:auto;
+}
+
+/* User icon button */
+#user-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #2e3a3a;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+#user-btn:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.dropdown-menu {
+    border: none;
+    border-radius: 10px;
+    padding: 8px 0;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(25,118,210,0.08);
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.wrapper {
+    min-height: calc(100vh - 100px);
+}
+
+/* Content */
+.content {
+    background-color: #f5f7f9;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.side-nav {
+    background-color: #f8faf9;
+    transition: all 0.3s ease;
+}
+
+/* Desktop sidebar */
+@media (min-width: 992px) {
+    .side-nav {
+        position: sticky;
+        top: 100px;
+        height: calc(100vh - 100px);
+        overflow-y:auto;
+    }
+}
+
+/* Mobile sidebar (drawer) */
+@media (max-width: 991px) {
+    .side-nav {
+        position: fixed;
+        top: 100px;
+        left: 0;
+        overflow-y:auto;
+        width: 240px;
+        height: calc(100vh - 100px);
+        z-index: 1050;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    }
+}
+
+/* =========================
+   SIDEBAR ITEMS (MUI style)
+========================= */
+.nav-item {
+    border-radius: 8px;
+    margin: 4px 8px;
+    transition: background 0.2s ease;
+}
+
+.nav-link {
+    display: block;
+    padding: 10px 16px;
+    color: #2e3a3a;
+    font-size: 14px;
+}
+
+/* Hover */
+.nav-item:hover {
+    background-color: rgba(25,118,210,0.08);
+}
+
+/* Active */
+.nav-item.active {
+    background-color: rgba(25,118,210,0.12);
+}
+
+.nav-item.active .nav-link {
+    color: #1976d2;
+    font-weight: 500;
+}
+
+/* =========================
+   BUTTONS (MUI style)
+========================= */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    text-transform: none;
+    padding: 8px 16px;
+    border: none;
+    transition: all 0.2s ease;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* Primary */
+.btn-primary {
+    background-color: #1976d2;
+    color: #fff;
+    box-shadow: 0px 1px 2px rgba(0,0,0,0.12);
+}
+
+.btn-primary:hover {
+    background-color: #1565c0;
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Danger */
+.btn-danger {
+    background-color: #d32f2f;
+}
+
+.btn-danger:hover {
+    background-color: #b71c1c;
+}
+
+/* Outline */
+.btn-outline-primary {
+    border: 1px solid #1976d2;
+    color: #1976d2;
+}
+
+.btn-outline-primary:hover {
+    background-color: rgba(25,118,210,0.08);
+}
+
+/* Disabled */
+.btn:disabled {
+    opacity: 0.38;
+}
+
+/* Icon button */
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.btn-icon:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* =========================
+   FORMS (MUI style)
+========================= */
+.form-control,
+.form-select,
+input[type="date"] {
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    padding: 8px 10px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus,
+input[type="date"]:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25,118,210,0.2);
+    outline: none;
+}
+
+.form-label {
+    font-size: 13px;
+    color: #5f6b6b;
+}
+
+/* =========================
+   TABLE (MUI style)
+========================= */
+.table {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.12);
+}
+
+.table th {
+    background-color: #f5f7f9;
+    font-weight: 500;
+    font-size: 14px;
+    color: #5f6b6b;
+    padding: 12px;
+}
+
+.table td {
+    padding: 12px;
+    font-size: 14px;
+    color: #2e3a3a;
+    border-top: 1px solid #eeeeee;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(25,118,210,0.04);
+}
+
+/* =========================
+   MODAL
+========================= */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid #eee;
+}
+
+.modal-title {
+    font-weight: 500;
+}
+
+/* =========================
+   ALERTS
+========================= */
+.alert {
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* =========================
+   UTILITIES
+========================= */
+.required-mark {
+    font-size: 8px;
+    color: red;
+}
