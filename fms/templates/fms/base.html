@@ -66,20 +66,20 @@
 
             <ul class="navbar-nav p-2">
 
-                <li class="nav-item ">
-                    <a class="nav-link" href="">
+                <li class="nav-item {% if request.path == '/dashboard' %}active{% endif %}">
+                    <a class="nav-link " href="{% url 'view_dashboard' %}">
                         <i class="fa-solid fa-chart-line me-2"></i> Dashboard
                     </a>
                 </li>
 
-                <li class="nav-item active">
+                <li class="nav-item">
                     <a class="nav-link" href="">
                         <i class="fa-solid fa-receipt me-2"></i> Transactions
                     </a>
                 </li>
 
-                <li class="nav-item ">
-                    <a class="nav-link" href="">
+                <li class="nav-item {% if request.path == '/category' %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'view_category' %}">
                         <i class="fa-solid fa-layer-group me-2"></i> Category
                     </a>
                 </li>
