@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, logout
+from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.shortcuts import render, redirect
@@ -17,25 +17,30 @@ def signup_user(request):
         return render(request, "identity/signup.html")
 
     if request.method == 'POST':
-        first_name = request.POST.get('firstname')
-        last_name = request.POST.get('lastname')
-        email = request.POST.get('email')
+
+        form_data = {
+            'first_name': request.POST.get('firstname', ''),
+            'last_name': request.POST.get('lastname', ''),
+            'email': request.POST.get('email', ''),
+        }
+
+        first_name = form_data['first_name']
+        last_name = form_data['last_name']
+        email = form_data['email']
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
 
-        print(first_name, last_name, email, password, confirm_password)
-
         if not all([first_name, last_name, email, password, confirm_password]):
             messages.warning(request, "Required fields can't be empty.")
-            return render(request, "identity/signup.html")
+            return render(request, "identity/signup.html", {"form_data":form_data})
 
         if User.objects.filter(username=email).exists():
             messages.warning(request, "Username already exists")
-            return render(request, "identity/signup.html")
+            return render(request, "identity/signup.html", {"form_data":form_data})
 
         if password != confirm_password:
             messages.warning(request, "Passwords does not match")
-            return render(request, "identity/signup.html")
+            return render(request, "identity/signup.html", {"form_data":form_data})
         try:
             with transaction.atomic():
                 user = User.objects.create(
@@ -55,7 +60,7 @@ def signup_user(request):
                 )
 
             messages.success(request, "Signup successful")
-            return redirect('login_view')
+            return redirect('login_page')
         except Exception as e:
             messages.error(request, f"{e}")
             return render(request, "identity/signup.html")
@@ -72,9 +77,11 @@ def authenticate_user(request):
 
         user = authenticate(username=username, password=password)
 
-        if not user:
+        if user is None:
             messages.error(request, "Invalid credentials")
-            return redirect(request, "identity/login.html")
+            return render(request, "identity/index.html")
+
+        login(request, user)
 
         return redirect('view_dashboard')
 

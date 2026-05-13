@@ -116,6 +116,7 @@ body {
     border-radius: 8px;
     margin: 4px 8px;
     transition: background 0.2s ease;
+
 }
 
 .nav-link {
@@ -133,6 +134,7 @@ body {
 /* Active */
 .nav-item.active {
     background-color: rgba(25,118,210,0.12);
+
 }
 
 .nav-item.active .nav-link {
