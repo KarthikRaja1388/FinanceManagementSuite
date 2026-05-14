@@ -9,7 +9,8 @@ from identity.models import UserProfile
 
 # Create your views here.
 def view_category(request):
-    return render(request,'category/index.html')
+    generic_categories = Category.objects.filter(user__isnull=True).order_by('category_name')
+    return render(request,'category/index.html', {"generic_categories":generic_categories})
 
 @login_required(login_url="login_page")
 def add_category(request):
