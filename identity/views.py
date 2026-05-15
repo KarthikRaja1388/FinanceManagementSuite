@@ -78,7 +78,7 @@ def authenticate_user(request):
         user = authenticate(username=username, password=password)
 
         if user is None:
-            messages.error(request, "Invalid credentials")
+            messages.warning(request, "Invalid credentials")
             return render(request, "identity/index.html")
 
         login(request, user)
