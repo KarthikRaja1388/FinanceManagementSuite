@@ -1,4 +1,8 @@
 {% extends 'fms/base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'fms/css/category.css' %}">
+{% endblock %}
 
 {% block title %}FMS - Category{% endblock %}
 
@@ -26,27 +30,50 @@
 <!-- Category List -->
 <div class="row g-3">
     <!-- Example Category: Groceries -->
-    <div class="col-12 col-md-10 col-lg-8 mx-auto">
+    {% for g_category in generic_categories %}
+    <div class="col-6 col-md-4 col-lg-2">
         <div class="card category-card border-0 shadow-sm">
             <div class="card-body d-flex align-items-center">
                 <div class="category-icon me-3 bg-danger-soft text-danger">
-                    <i class="fa-solid fa-cart-shopping"></i>
+                    <i class="fa-solid {{g_category.icon_class}}"></i>
                 </div>
                 <div class="flex-grow-1">
-                    <h6 class="mb-0 fw-bold">Groceries</h6>
-                    <small class="text-muted">Supermarket spending</small>
-                </div>
-                <div class="action-buttons d-flex gap-2">
-                    <button class="btn btn-icon btn-outline-primary"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn btn-icon btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                    <h6 class="mb-0 fw-bold">{{g_category.category_name}}</h6>
                 </div>
             </div>
         </div>
     </div>
+    {% endfor %}
+</div>
+<div class="row g-3 mt-3 user-category-container">
+    {% for u_category in user_categories %}
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card category-card border-0 shadow-sm">
+            <div class="card-body d-flex align-items-center">
+                <div class="category-icon me-3 bg-danger-soft text-danger">
+                    <i class="fa-solid {{u_category.icon_class}}"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0 fw-bold">{{u_category.category_name}}</h6>
+                </div>
+                {% if not u_category.is_system %}
+                <div class="action-buttons d-flex gap-2">
+                    <a class="btn btn-icon btn-outline-primary btn-edit" data-bs-toggle="modal"
+                        data-bs-target="#editCategoryModal" data-id="{{u_category.id}}"
+                        data-name="{{u_category.category_name}}" data-icon="{{u_category.icon_class}}"><i
+                            class="fa-solid fa-pen"></i></a>
+                    <a href="{% url 'delete_category' u_category.id %}" class="btn btn-icon btn-outline-danger"><i
+                            class="fa-solid fa-trash"></i></a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 </div>
 
-<!-- Simple Add Category Modal -->
+<!-- Add Category Modal -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -61,6 +88,64 @@
                         <label class="form-label" for="category_name">Category Name</label>
                         <input type="text" class="form-control" id="category_name" name="category_name">
                     </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content ms-auto">
+                            <!-- Live preview -->
+                            <div class="mb-2">
+                                <span id="icon-preview" class="fs-4">
+                                    <i class="fa-solid fa-folder"></i>
+                                </span>
+                            </div>
+
+                            <!-- Dropdown -->
+                            <div class="dropdown ms-3">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown">
+                                    Choose Icon
+                                </button>
+
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item icon-option" href="#" data-icon="fa-folder"
+                                            data-selction="Folder">
+                                            <i class="fa-solid fa-folder me-2"></i> Folder
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item icon-option" href="#" data-icon="fa-box"
+                                            data-selection="Box">
+                                            <i class="fa-solid fa-box me-2"></i> Box
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item icon-option" href="#" data-icon="fa-tag"
+                                            data-selection="Tag">
+                                            <i class="fa-solid fa-tag me-2"></i> Tag
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item icon-option" href="#" data-icon="fa-user"
+                                            data-selection="User">
+                                            <i class="fa-solid fa-user me-2"></i> User
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item icon-option" href="#" data-icon="fa-note-sticky"
+                                            data-selction="Note">
+                                            <i class="fa-solid fa-note-sticky me-2"></i> Note
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Hidden field for Django -->
+                        <input type="hidden" name="icon_class" id="icon-input" value="fa-folder">
+                    </div>
                     <button type="submit" class="btn btn-primary">Save Category</button>
 
                 </form>
@@ -70,4 +155,143 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit_category_form" action="" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label" for="category_name">Category Name</label>
+                        <input type="text" class="form-control" id="edit_category_name" name="category_name">
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content ms-auto">
+                            <!-- Live preview -->
+                            <div class="mb-2">
+                                <span id="edit-icon-preview" class="fs-4">
+                                    <i class="fa-solid fa-folder"></i>
+                                </span>
+                            </div>
+
+                            <!-- Dropdown -->
+                            <div class="dropdown ms-3">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown">
+                                    Choose Icon
+                                </button>
+
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item edit-icon-option" href="#" data-icon="fa-folder"
+                                            data-selction="Folder">
+                                            <i class="fa-solid fa-folder me-2"></i> Folder
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item edit-icon-option" href="#" data-icon="fa-box"
+                                            data-selection="Box">
+                                            <i class="fa-solid fa-box me-2"></i> Box
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item edit-icon-option" href="#" data-icon="fa-tag"
+                                            data-selection="Tag">
+                                            <i class="fa-solid fa-tag me-2"></i> Tag
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item edit-icon-option" href="#" data-icon="fa-user"
+                                            data-selection="User">
+                                            <i class="fa-solid fa-user me-2"></i> User
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item edit-icon-option" href="#" data-icon="fa-note-sticky"
+                                            data-selction="Note">
+                                            <i class="fa-solid fa-note-sticky me-2"></i> Note
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="icon_class" id="edit-icon-input" value="fa-folder">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Category</button>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.btn-edit').forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.dataset.id;
+            const name = this.dataset.name;
+            const icon = this.dataset.icon;
+
+
+            document.getElementById("edit_category_name").value = name;
+
+
+            document.getElementById('edit-icon-preview').innerHTML =
+                `<i class="fa-solid ${icon}"></i>`;
+
+            document.getElementById('edit-icon-input').value = icon;
+
+            document.getElementById("edit_category_form").action =
+                `/category/update/${id}`;
+        })
+    })
+    document.querySelectorAll('.edit-icon-option').forEach(item => {
+
+        item.addEventListener('click', function (e) {
+
+            e.preventDefault();
+
+            const iconClass = this.getAttribute('data-icon');
+
+            // Update hidden input
+            document.getElementById('edit-icon-input').value = iconClass;
+
+            // Update preview
+            document.getElementById('edit-icon-preview').innerHTML =
+                `<i class="fa-solid ${iconClass}"></i>`;
+        });
+
+    });
+
+
+
+
+    //Add logic
+    document.querySelectorAll('.icon-option').forEach(item => {
+        item.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const iconClass = this.getAttribute('data-icon');
+
+            document.getElementById('icon-input').value = iconClass;
+
+            document.getElementById('icon-preview').innerHTML =
+                `<i class="fa-solid ${iconClass}"></i>`;
+        });
+    });
+
+</script>
 {% endblock %}
