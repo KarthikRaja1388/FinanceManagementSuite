@@ -7,25 +7,21 @@
 {% block title %}FMS - Category{% endblock %}
 
 {% block content%}
-<div class="container-fluid py-3">
-
-    <!-- Page Header & Search -->
-    <div class="row mb-4 align-items-center">
-        <div class="col-12 align-items-center">
-            <h3 class="fw-bold text-dark mb-3 mb-md-0 text-center">Categories</h3>
-        </div>
+<!-- Header -->
+<div class="page-header d-flex mb-4 justify-content-between">
+    <div>
+        <h2 class="fw-bold mb-1">Categories</h2>
+        <p class="text-muted mb-0">Manage your categories</p>
     </div>
+
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+        <i class="fa-solid fa-plus me-2"></i> Add Category
+    </button>
 </div>
 
-<!-- Add New Category Button -->
-<div class="row mb-4">
-    <div class="col-12 d-flex justify-content-end">
-        <button class="btn btn-primary py-2 shadow-sm  d-flex align-items-center justify-content-center"
-            data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-            <i class="fa-solid fa-plus me-2"></i> New Category
-        </button>
-    </div>
-</div>
+
+
+
 
 <!-- Category List -->
 <div class="row g-3">
@@ -228,8 +224,9 @@
 
                         <input type="hidden" name="icon_class" id="edit-icon-input" value="fa-folder">
                     </div>
-                    <button type="submit" class="btn btn-primary">Save Category</button>
-
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Category</button>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">

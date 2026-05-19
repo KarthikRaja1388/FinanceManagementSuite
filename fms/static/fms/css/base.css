@@ -74,6 +74,13 @@ body {
     min-height: calc(100vh - 100px);
 }
 
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
 /* Content */
 .content {
     background-color: #f5f7f9;

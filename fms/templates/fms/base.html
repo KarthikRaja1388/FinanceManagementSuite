@@ -90,8 +90,8 @@
 
 
                 <li class="nav-item ">
-                    <a class="nav-link" href="#">
-                        <i class="fa-solid fa-wallet me-2"></i>Accounts
+                    <a class="nav-link" href="{% url 'view_account' %}">
+                        <i class="fa-solid fa-wallet me-2"></i> Accounts
                     </a>
                 </li>
             </ul>
@@ -110,11 +110,12 @@
             </div>
             {% endfor %}
             {% endif %}
+            <div class="container py-4">
 
-            <!-- Page Content -->
-            {% block content %}
-            {% endblock %}
-
+                <!-- Page Content -->
+                {% block content %}
+                {% endblock %}
+            </div>
         </main>
 
     </div>

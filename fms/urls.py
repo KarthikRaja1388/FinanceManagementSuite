@@ -9,4 +9,5 @@ urlpatterns = [
     path('dashboard/', views.view_dashboard, name="view_dashboard"),
     path("", include('identity.urls')),
     path("category/", include('category.urls')),
+    path('account/', include('account.urls')),
 ]
