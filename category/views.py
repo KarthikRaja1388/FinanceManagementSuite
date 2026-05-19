@@ -1,4 +1,3 @@
-from selectors import SelectSelector
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import ProtectedError
@@ -6,10 +5,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
 from category.models import Category
-from identity.models import UserProfile
 
 
 # Create your views here.
+@login_required(login_url="login_page")
 def view_category(request):
 
     user_profile = request.user.profile
