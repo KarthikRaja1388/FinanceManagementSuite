@@ -1,6 +1,5 @@
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import ProtectedError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
@@ -51,7 +50,7 @@ def add_category(request):
 def update_category(request, category_id:int):
     category = get_object_or_404(Category, id=category_id)
 
-    if request.method == 'POST' and category is not None:
+    if request.method == 'POST':
         new_name = request.POST.get('category_name')
         new_icon = request.POST.get('icon_class')
 
@@ -81,10 +80,7 @@ def delete_category(request, category_id:int):
             messages.warning(request, f"Category {category_name} has been deleted!")
     except ValueError:
         messages.info(request, f'Unable to delete')
-    except ProtectedError:
-        messages.warning(request,
-                         f"Cannot delete '{category.category_name}' because it contains active sub-categories.\n"
-                         "Please delete or move the sub-categories first. ")
+
     return redirect('view_category')
 
 

@@ -76,8 +76,8 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="">
+                <li class="nav-item {% if request.path == '/transaction' %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'view_transactions' %}">
                         <i class="fa-solid fa-receipt me-2"></i> Transactions
                     </a>
                 </li>

@@ -1,0 +1,71 @@
+ .page-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 20px;
+ }
+
+ .page-title {
+     font-size: 22px;
+     font-weight: 600;
+ }
+
+ .card {
+     border: none;
+     border-radius: 16px;
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+ }
+
+ .table thead {
+     background: #f8f9fa;
+ }
+
+ .badge-income {
+     background: #d1fae5;
+     color: #065f46;
+     padding: 6px 10px;
+     border-radius: 10px;
+     font-size: 12px;
+ }
+
+ .badge-expense {
+     background: #fee2e2;
+     color: #991b1b;
+     padding: 6px 10px;
+     border-radius: 10px;
+     font-size: 12px;
+ }
+
+ .action-btn {
+     border: none;
+     background: transparent;
+     cursor: pointer;
+     margin-right: 6px;
+ }
+
+ .action-btn.edit {
+     color: #2563eb;
+ }
+
+ .action-btn.delete {
+     color: #dc2626;
+ }
+
+ .filter-bar {
+     display: flex;
+     gap: 10px;
+     margin-bottom: 15px;
+ }
+
+ .filter-bar select,
+ .filter-bar input {
+     border-radius: 10px;
+ }
+
+ .add-btn {
+     border-radius: 10px;
+ }
+
+ .btn-filter {
+     border: 1px solid gray;
+ }
