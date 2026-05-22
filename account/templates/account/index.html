@@ -84,22 +84,21 @@
                         data-primary="{{account.is_primary|yesno:'true,false'}}">
                         <i class="fa-solid fa-pen"></i>Edit</a>
 
-                    <a href="#" class="btn btn-outline-danger btn-sm btn-delete" data-bs-toggle="modal"
-                        data-bs-target="#deleteAccountModal">
+                    <a href="#" class="btn btn-outline-danger btn-sm btn-delete-confirm" data-bs-toggle="modal"
+                        data-bs-target="#deleteAccountModal" data-id="{{account.id}}">
                         <i class="fa-solid fa-trash"></i>Delete</a>
                 </div>
 
             </div>
         </div>
     </div>
-    {% if account is None %}
+    {% empty %}
     <div class="empty-state mt-5">
         <i class="fa fa-wallet display-3 text-muted"></i>
         <h4 class="mt-3">No Accounts Found</h4>
         <p class="text-muted">Create your first account to get started.</p>
 
     </div>
-    {% endif %}
     {% endfor %}
 
 </div>
@@ -205,19 +204,24 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">
-                    Cancel
-                </button>
+                <form id="delete-account-form" method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
 
-                <button class="btn btn-danger">
-                    Delete
-                </button>
+                    <button class="btn btn-danger " id="btn-delete">
+                        Delete
+                    </button>
+                </form>
             </div>
-
         </div>
+
     </div>
 </div>
+</div>
 <script>
+    //Edit handler
     document.querySelectorAll('.btn-edit').forEach(button => {
         button.addEventListener('click', function () {
 
@@ -235,6 +239,15 @@
 
             document.getElementById('edit_account_form').action = `/account/update/${id}`;
 
+        })
+    })
+
+    //delete handler
+    document.querySelectorAll('.btn-delete-confirm').forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.dataset.id;
+
+            document.getElementById('delete-account-form').action = `/account/delete/${id}`;
         })
     })
 </script>

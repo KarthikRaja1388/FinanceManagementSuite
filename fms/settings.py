@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'identity.apps.IdentityConfig',
     'category.apps.CategoryConfig',
     'account.apps.AccountConfig',
+    'transaction.apps.TransactionConfig',
 
 ]
 

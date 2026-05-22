@@ -1,6 +1,7 @@
 from django.contrib.admin.actions import delete_selected
 from django.contrib.auth import user_logged_in
 from django.contrib.auth.decorators import login_required
+from django.db.models import ProtectedError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
@@ -75,4 +76,23 @@ def update_account(request, account_id:int):
         account.save()
         messages.info(request, "Account has been updated successfully!")
         return redirect("view_account")
+
+@login_required(login_url="login_page")
+def delete_account(request, account_id:int):
+    account = get_object_or_404(Account, id=account_id)
+
+    try:
+        if account is not None:
+            account_name = account.account_name
+            account.delete()
+            messages.success(request, f"Account {account_name} has been deleted!")
+            return redirect("view_account")
+    except ProtectedError:
+        messages.warning(request,"This account cannot be deleted because it has linked transactions.")
+    return redirect("view_account")
+
+
+
+
+
 
