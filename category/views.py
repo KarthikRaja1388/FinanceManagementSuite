@@ -77,7 +77,7 @@ def delete_category(request, category_id:int):
         if category is not None:
             category_name = category.category_name
             category.delete()
-            messages.warning(request, f"Category {category_name} has been deleted!")
+            messages.info(request, f"Category {category_name} has been deleted!")
     except ValueError:
         messages.info(request, f'Unable to delete')
 
