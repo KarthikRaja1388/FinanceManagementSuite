@@ -69,3 +69,7 @@
  .btn-filter {
      border: 1px solid gray;
  }
+
+ .btn-clear {
+     border: 1px solid #dc3545;
+ }
