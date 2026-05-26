@@ -22,28 +22,23 @@
             <form method="GET" class="d-flex align-items-center gap-2">
                 <select name="range" class="form-select w-auto" onchange="this.form.submit()">
 
-                    <option value="week"
-                        {% if selected_range == 'week' %}selected{% endif %}>
+                    <option value="week" {% if selected_range == 'week' %}selected{% endif %}>
                         This Week
                     </option>
 
-                    <option value="lweek"
-                        {% if selected_range == 'lweek' %}selected{% endif %}>
+                    <option value="lweek" {% if selected_range == 'lweek' %}selected{% endif %}>
                         Last Week
                     </option>
 
-                    <option value="month"
-                        {% if selected_range == 'month' %}selected{% endif %}>
+                    <option value="month" {% if selected_range == 'month' %}selected{% endif %}>
                         This Month
                     </option>
 
-                    <option value="3months"
-                        {% if selected_range == '3months' %}selected{% endif %}>
+                    <option value="3months" {% if selected_range == '3months' %}selected{% endif %}>
                         Last 3 Months
                     </option>
 
-                    <option value="year"
-                        {% if selected_range == 'year' %}selected{% endif %}>
+                    <option value="year" {% if selected_range == 'year' %}selected{% endif %}>
                         This Year
                     </option>
 
@@ -133,19 +128,19 @@
                     {% if not transactions %}
                     <div class="text-center py-5 chart-empty-overlay">
 
-                    <div class="text-center">
-                        <div style="font-size: 64px;" class="row w-100 text-center">
-                            <i class="fa-solid fa-money-bill-transfer"></i>
-                        </div>
+                        <div class="text-center">
+                            <div style="font-size: 64px;" class="row w-100 text-center">
+                                <i class="fa-solid fa-money-bill-transfer"></i>
+                            </div>
 
-                        <h5 class="mt-3 fw-semibold w-100">
-                            No Transactions Found
-                        </h5>
-                        <p class="mb-4 row w-100" style="font-size:14px;">
-                            There are no transactions available for the selected period.
-                        </p>
+                            <h5 class="mt-3 fw-semibold w-100">
+                                No Transactions Found
+                            </h5>
+                            <p class="mb-4 row w-100" style="font-size:14px;">
+                                There are no transactions available for the selected period.
+                            </p>
+                        </div>
                     </div>
-                </div>
                     {% endif %}
                 </div>
 
@@ -164,19 +159,19 @@
                     {% if not transactions %}
                     <div class="text-center py-5 chart-empty-overlay">
 
-                    <div class="text-center">
-                        <div style="font-size: 64px;" class="row w-100 text-center">
-                            <i class="fa-solid fa-money-bill-transfer"></i>
-                        </div>
+                        <div class="text-center">
+                            <div style="font-size: 64px;" class="row w-100 text-center">
+                                <i class="fa-solid fa-money-bill-transfer"></i>
+                            </div>
 
-                        <h5 class="mt-3 fw-semibold w-100">
-                            No Transactions Found
-                        </h5>
-                        <p class="mb-4 row w-100 text-center" style="font-size:14px;">
-                            There are no transactions available for the selected period.
-                        </p>
+                            <h5 class="mt-3 fw-semibold w-100">
+                                No Transactions Found
+                            </h5>
+                            <p class="mb-4 row w-100 text-center" style="font-size:14px;">
+                                There are no transactions available for the selected period.
+                            </p>
+                        </div>
                     </div>
-                </div>
                     {% endif %}
                 </div>
 
@@ -207,7 +202,8 @@
                     <div>
                         <div class="fw-semibold">{{txn.description}}</div>
                         <div class="transaction-category">
-                            {% if txn.transaction_type == "INC" %}Income {% else %} Expense {% endif %} • {{txn.transaction_date}}
+                            {% if txn.transaction_type == "INC" %}Income {% else %} Expense {% endif %} •
+                            {{txn.transaction_date}}
                         </div>
                     </div>
 
@@ -218,20 +214,20 @@
                 {% empty %}
                 <div class="text-center py-5">
 
-    <div style="font-size: 64px;">
-        <i class="fa-solid fa-money-bill-transfer"></i>
-    </div>
+                    <div style="font-size: 64px;">
+                        <i class="fa-solid fa-money-bill-transfer"></i>
+                    </div>
 
-    <h5 class="mt-3 fw-semibold">
-        No Transactions Found
-    </h5>
+                    <h5 class="mt-3 fw-semibold">
+                        No Transactions Found
+                    </h5>
 
-    <p class="text-muted mb-4" style="font-size:14px;">
-        There are no transactions available for the selected period.
-    </p>
+                    <p class="text-muted mb-4" style="font-size:14px;">
+                        There are no transactions available for the selected period.
+                    </p>
 
 
-</div>
+                </div>
                 {% endfor %}
 
 
@@ -294,14 +290,14 @@
 
 <script>
     const incomeExpenseCtx = document.getElementById('incomeExpenseChart');
-    const labels = {{ labels|safe }};
-    const incomeData = {{ income_data|safe }};
-    const expenseData = {{ expense_data|safe }};
+    const ie_labels = {{ labels| safe }};
+    const incomeData = {{ income_data| safe }};
+    const expenseData = {{ expense_data| safe }};
 
     new Chart(incomeExpenseCtx, {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: ie_labels,
             datasets: [
                 {
                     label: 'Income',
@@ -324,15 +320,15 @@
     });
 
     const expenseCategoryCtx = document.getElementById('expenseCategoryChart');
-    const expense_category_labels = {{expense_category_labels|safe}};
-    const expense_category_data = {{expense_category_data|safe}};
+    const expense_category_labels = {{ expense_category_labels| safe}};
+    const expense_category_data = {{ expense_category_data| safe}};
 
     function generateHSLColors(count) {
-    return Array.from({ length: count }, (_, i) => {
-        const hue = (i * 360 / count);
-        return `hsl(${hue}, 70%, 50%)`;
-    });
-}
+        return Array.from({ length: count }, (_, i) => {
+            const hue = (i * 360 / count);
+            return `hsl(${hue}, 70%, 50%)`;
+        });
+    }
     const backgroundColors = generateHSLColors(expense_category_labels.length);
 
     new Chart(expenseCategoryCtx, {
@@ -341,7 +337,7 @@
             labels: expense_category_labels,
             datasets: [{
                 data: expense_category_data,
-                backgroundColor:backgroundColors
+                backgroundColor: backgroundColors
             }]
         },
         options: {
