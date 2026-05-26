@@ -1,7 +1,354 @@
 {% extends 'fms/base.html' %}
+{% load static %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'fms/css/dashboard.css' %}">
+{% endblock %}
 
 {% block content %}
+<div class="container-fluid py-4">
 
-Test
+    <!-- DASHBOARD FILTER -->
+    <div class="dashboard-card p-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div>
+                <h5 class="section-title mb-1">Dashboard Overview</h5>
+                <small class="text-muted">
+                    Filter by timeframe
+                </small>
+            </div>
+
+            <form method="GET" class="d-flex align-items-center gap-2">
+                <select name="range" class="form-select w-auto" onchange="this.form.submit()">
+
+                    <option value="week"
+                        {% if selected_range == 'week' %}selected{% endif %}>
+                        This Week
+                    </option>
+
+                    <option value="lweek"
+                        {% if selected_range == 'lweek' %}selected{% endif %}>
+                        Last Week
+                    </option>
+
+                    <option value="month"
+                        {% if selected_range == 'month' %}selected{% endif %}>
+                        This Month
+                    </option>
+
+                    <option value="3months"
+                        {% if selected_range == '3months' %}selected{% endif %}>
+                        Last 3 Months
+                    </option>
+
+                    <option value="year"
+                        {% if selected_range == 'year' %}selected{% endif %}>
+                        This Year
+                    </option>
+
+                </select>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="dashboard-card summary-card h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="summary-title">Total Balance</div>
+                        <div class="summary-value">${{current_balance}}</div>
+                    </div>
+                    <div class="summary-icon balance-bg">
+                        💳
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="dashboard-card summary-card h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="summary-title">Total Income</div>
+                        <div class="summary-value text-success">${{total_income}}</div>
+                    </div>
+                    <div class="summary-icon income-bg">
+                        📈
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="dashboard-card summary-card h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="summary-title">Total Expense</div>
+                        <div class="summary-value text-danger">${{total_expense}}</div>
+                    </div>
+                    <div class="summary-icon expense-bg">
+                        💸
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="dashboard-card summary-card h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="summary-title">Net Savings</div>
+                        <div class="summary-value" style="color:#6f42c1">
+                            ${{total_savings}}
+                        </div>
+                    </div>
+                    <div class="summary-icon saving-bg">
+                        🏦
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-8">
+            <div class="dashboard-card p-4 h-100">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="section-title mb-0">
+                        Income vs Expense
+                    </h5>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="incomeExpenseChart"></canvas>
+                    {% if not transactions %}
+                    <div class="text-center py-5 chart-empty-overlay">
+
+                    <div class="text-center">
+                        <div style="font-size: 64px;" class="row w-100 text-center">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                        </div>
+
+                        <h5 class="mt-3 fw-semibold w-100">
+                            No Transactions Found
+                        </h5>
+                        <p class="mb-4 row w-100" style="font-size:14px;">
+                            There are no transactions available for the selected period.
+                        </p>
+                    </div>
+                </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="dashboard-card p-4 h-100">
+
+                <h5 class="section-title">
+                    Expense Breakdown
+                </h5>
+
+                <div class="chart-container d-flex align-items-center justify-content-center">
+                    <canvas id="expenseCategoryChart"></canvas>
+                    {% if not transactions %}
+                    <div class="text-center py-5 chart-empty-overlay">
+
+                    <div class="text-center">
+                        <div style="font-size: 64px;" class="row w-100 text-center">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                        </div>
+
+                        <h5 class="mt-3 fw-semibold w-100">
+                            No Transactions Found
+                        </h5>
+                        <p class="mb-4 row w-100 text-center" style="font-size:14px;">
+                            There are no transactions available for the selected period.
+                        </p>
+                    </div>
+                </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RECENT TRANSACTIONS + BUDGET -->
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+            <div class="dashboard-card p-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <h5 class="section-title mb-0">
+                        Recent Transactions
+                    </h5>
+
+                    <a href="{% url 'view_transactions' %}" class="btn btn-outline-primary btn-sm">
+                        View All
+                    </a>
+
+                </div>
+                {% for txn in transactions %}
+                <div class="transaction-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-semibold">{{txn.description}}</div>
+                        <div class="transaction-category">
+                            {% if txn.transaction_type == "INC" %}Income {% else %} Expense {% endif %} • {{txn.transaction_date}}
+                        </div>
+                    </div>
+
+                    <div class="{% if txn.transaction_type == 'INC' %}income-text {% else %} expense-text {% endif %}">
+                        {% if txn.transaction_type == "INC" %}+{% else %} - {% endif %} ${{txn.amount}}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5">
+
+    <div style="font-size: 64px;">
+        <i class="fa-solid fa-money-bill-transfer"></i>
+    </div>
+
+    <h5 class="mt-3 fw-semibold">
+        No Transactions Found
+    </h5>
+
+    <p class="text-muted mb-4" style="font-size:14px;">
+        There are no transactions available for the selected period.
+    </p>
+
+
+</div>
+                {% endfor %}
+
+
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="dashboard-card p-4">
+
+                <h5 class="section-title">
+                    Budget Progress
+                </h5>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Food</span>
+                        <span>$420 / $500</span>
+                    </div>
+
+                    <div class="progress budget-progress">
+                        <div class="progress-bar" style="width:84%"></div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Transport</span>
+                        <span>$180 / $300</span>
+                    </div>
+
+                    <div class="progress budget-progress">
+                        <div class="progress-bar bg-success" style="width:60%"></div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Entertainment</span>
+                        <span>$240 / $250</span>
+                    </div>
+
+                    <div class="progress budget-progress">
+                        <div class="progress-bar bg-danger" style="width:96%"></div>
+                    </div>
+                </div>
+
+                <div class="alert alert-light border mt-4 mb-0">
+                    <strong>Insight:</strong><br>
+                    Your entertainment spending is close to the monthly limit.
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const incomeExpenseCtx = document.getElementById('incomeExpenseChart');
+    const labels = {{ labels|safe }};
+    const incomeData = {{ income_data|safe }};
+    const expenseData = {{ expense_data|safe }};
+
+    new Chart(incomeExpenseCtx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Income',
+                    data: incomeData,
+                    backgroundColor: 'rgba(25, 135, 84, 0.7)',
+                    borderRadius: 8
+                },
+                {
+                    label: 'Expense',
+                    data: expenseData,
+                    backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                    borderRadius: 8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    const expenseCategoryCtx = document.getElementById('expenseCategoryChart');
+    const expense_category_labels = {{expense_category_labels|safe}};
+    const expense_category_data = {{expense_category_data|safe}};
+
+    function generateHSLColors(count) {
+    return Array.from({ length: count }, (_, i) => {
+        const hue = (i * 360 / count);
+        return `hsl(${hue}, 70%, 50%)`;
+    });
+}
+    const backgroundColors = generateHSLColors(expense_category_labels.length);
+
+    new Chart(expenseCategoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: expense_category_labels,
+            datasets: [{
+                data: expense_category_data,
+                backgroundColor:backgroundColors
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+</script>
+
 {% endblock %}

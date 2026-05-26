@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.utils.timezone import now
+
+from account.models import Account
 from category.models import Category
 
 
@@ -17,6 +19,7 @@ class Transaction(models.Model):
     transaction_type = models.CharField(max_length=3, choices=TransactionType.choices)
     added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='txn_user')
     account_admin = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='account_admin')
+    account = models.ForeignKey(Account, on_delete=models.PROTECT)
     transaction_date = models.DateField(default=now())
     updated_at = models.DateField(auto_now=True)
 
