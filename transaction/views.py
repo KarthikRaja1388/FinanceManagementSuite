@@ -1,3 +1,5 @@
+from pydoc import pager
+
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
@@ -53,6 +55,7 @@ def add_transaction(request):
         category_id = request.POST.get('category')
         transaction_date = request.POST.get('transaction_date')
 
+
         fields = {
             "Description": description,
             "Amount": amount,
@@ -74,8 +77,6 @@ def add_transaction(request):
             )
             return redirect('view_transactions')
 
-        account_admin = get_admin_user(request.user)
-
         try:
             category_obj = get_object_or_404(Category, id=category_id)
 
@@ -85,7 +86,7 @@ def add_transaction(request):
                 category = category_obj,
                 transaction_type = transaction_type,
                 added_by = request.user,
-                account_admin = account_admin,
+                account_admin = get_admin_user(request.user),
                 account=primary_account,
                 transaction_date = transaction_date,
             )
@@ -93,9 +94,10 @@ def add_transaction(request):
             apply_transaction_effect(primary_account,transaction_type,amount)
 
             messages.success(request, "Transaction added successfully!")
+            return redirect('view_transactions')
         except Exception as e:
             messages.warning(request, f"Unable to add transaction: {e}")
-        return redirect('view_transactions')
+            return redirect('view_transactions')
 
 @login_required(login_url="login_page")
 def update_transaction(request, transaction_id:int):

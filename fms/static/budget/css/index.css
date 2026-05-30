@@ -1,0 +1,50 @@
+.budget-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+    background: #fff;
+}
+
+.budget-card:hover {
+    transform: translateY(-2px);
+}
+
+.budget-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.budget-type {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+
+
+.budget-amount {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #198754;
+}
+
+.progress {
+    height: 10px;
+    border-radius: 20px;
+}
+
+.progress-bar {
+    border-radius: 20px;
+}
+
+.card-actions a {
+    margin-left: 8px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
