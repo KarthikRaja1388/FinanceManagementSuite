@@ -1,6 +1,5 @@
 from collections import defaultdict
 from datetime import timedelta
-from http.cookiejar import cut_port_re
 
 from django.db.models import Q, Sum
 from django.db.models.functions import TruncMonth
@@ -8,6 +7,8 @@ from django.utils.timezone import now
 from dateutil.relativedelta import relativedelta
 
 from account.models import Account
+from budget.models import Budget
+from budget.utils import get_spent_amount
 from category.models import Category
 from transaction.models import Transaction
 
@@ -20,7 +21,6 @@ def get_current_balance(user):
 
 
 def get_total_income(user, start, end):
-    transactions = Transaction.objects.filter(account_admin=user,transaction_type="INC", transaction_date__range=[start,end])
     return Transaction.objects.filter(
         account_admin=user,
         transaction_type="INC",
@@ -28,7 +28,6 @@ def get_total_income(user, start, end):
     ).aggregate(total=Sum('amount'))['total'] or 0
 
 def get_total_expense(user, start,end):
-    transactions = Transaction.objects.filter(account_admin=user,transaction_type="EXP", transaction_date__range=[start,end])
     return Transaction.objects.filter(
         account_admin=user,
         transaction_type="EXP",
@@ -135,3 +134,24 @@ def get_expense_per_category(user, start_date, end_date):
         for item in expense_per_category
     ]
     return  labels, data
+
+def get_budget_summary(user):
+    budget_summary = []
+
+    budgets = Budget.objects.filter(
+        added_by = user,
+        is_active = True,
+        category__isnull = False
+    ).select_related('category')
+    for budget in budgets:
+        spent_amount = get_spent_amount(user, budget.start_date, budget.end_date, budget.category)
+        percentage_used =(round((spent_amount/budget.budget_amount)*100,2) if budget.budget_amount > 0 else 0)
+        budget_summary.append({
+            "label": budget.category.category_name,
+            "spent_amount":spent_amount,
+            "budget_amount":budget.budget_amount,
+            "percentage_used":percentage_used
+
+        })
+        print(budget_summary)
+    return budget_summary

@@ -1,0 +1,428 @@
+{% extends 'fms/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'budget/css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+        <h2 class="fw-bold mb-1">Budgets</h2>
+        <p class="text-muted mb-0">Manage your spending limits</p>
+    </div>
+
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
+
+        <i class="fa-solid fa-plus me-2"></i>
+        Add Budget
+
+    </button>
+
+</div>
+
+
+<div class="row g-4">
+
+    {% for budget in budgets %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card budget-card h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+                        <div class="budget-title">
+                            {{budget.budget_name}}
+                        </div>
+
+                        <div class="budget-type">
+                            {{budget.period|title}} {% if budget.category %}• {{budget.category.category_name}}
+                            {%endif%}
+                        </div>
+                        <div class="budget-period budget-type">
+                            <i class=" fa-regular fa-calendar me-1"></i>
+                            {{budget.start_date | date:"d M" }} to {{budget.end_date | date:"d M Y"}}
+                        </div>
+                    </div>
+
+                    {% if budget.percentage_used < 80 %} <span class="badge bg-success">On Track</span>
+                        {% elif budget.percentage_used < 100 %} <span class="badge bg-warning text-dark">Near
+                            Limit</span>
+                            {% else %}
+                            <span class="badge bg-danger">Exceeded</span>
+                            {% endif %}
+
+                </div>
+
+                <div class="mt-4">
+                    <p class="text-muted mb-1">Budget Usage</p>
+                    <div class="budget-amount">
+                        ${{budget.spent_amount}} / ${{budget.budget_amount}}
+                    </div>
+                </div>
+
+                <div class="mt-3">
+
+                    <div class="progress">
+
+                        <div class="progress-bar
+                            {% if budget.percentage_used < 80 %}
+                                bg-success
+                            {% elif budget.percentage_used < 100 %}
+                                bg-warning
+                            {% else %}
+                                bg-danger
+                            {% endif %}" style="width:
+                            {% if budget.percentage_used > 100 %}
+                                100%
+                            {% else %}
+                                {{budget.percentage_used}}%
+                            {% endif %}">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+
+                    <small class="text-muted">
+                        {{budget.percentage_used}}% used
+                    </small>
+
+                    <small class="{% if budget.remaining_amount >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {% if budget.remaining_amount >= 0 %}
+                        ${{budget.remaining_amount}} remaining
+                        {% else %}
+                        Over by ${{budget.remaining_amount|floatformat:2}}
+                        {% endif %}
+                    </small>
+
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-end card-actions">
+
+                    <a href="#" class="btn btn-outline-primary btn-sm btn-edit" data-bs-toggle="modal"
+                        data-bs-target="#editBudgetModal" data-id="{{budget.id}}" data-name="{{budget.budget_name}}"
+                        data-amount="{{budget.budget_amount}}" data-category="{{budget.category.id}}"
+                        data-budget-type="{{budget.budget_type}}" data-period="{{budget.period}}"
+                        data-start="{{budget.start_date|date:'Y-m-d'}}" data-end="{{budget.end_date|date:'Y-m-d'}}"
+                        data-action="{% url 'update_budget' budget.id %}">
+
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
+
+                    </a>
+
+                    <a href="#" class="btn btn-outline-danger btn-sm btn-disable-confirm" data-bs-toggle="modal"
+                        data-bs-target="#disableBudgetModal" data-id="{{budget.id}}"
+                        data-action="{% url 'disable_budget' budget.id %}">
+
+                        <i class="fa-solid fa-ban"></i> Disable
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <!--Empty state-->
+    {% empty %}
+    <div class="empty-state mt-5">
+
+        <i class="fa-solid fa-wallet fa-3x text-muted"></i>
+        <h4 class="mt-3">No Budgets Found</h4>
+        <p class="text-muted">Create your first budget to start tracking spending.</p>
+
+    </div>
+    {% endfor %}
+
+</div>
+
+
+<!-- Add Budget Modal -->
+<div class="modal fade" id="addBudgetModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Add Budget</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form method="POST" action="{% url 'add_budget' %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Budget Name</label>
+                        <input type="text" class="form-control" name="budget_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Budget Type</label>
+                        <select class="form-select" name="budget_type" id="budget_type">
+                            <option value="">Select Type</option>
+                            <option value="overall">Overall Budget</option>
+                            <option value="category">Category Budget</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="budget_category_wrapper" style="display: none;">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="category" id="budget_category">
+                            <option value="">select category</option>
+                            {% for category in categories %}
+                            <option value="{{category.id}}">
+                                {{category.category_name}}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Budget Amount</label>
+                        <input type="number" step="0.01" class="form-control" name="budget_amount"
+                            placeholder="e.g. 500">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Period</label>
+                        <select class="form-select" name="period">
+                            <option value="">Select period</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="fortnightly">Fortnightly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="start_date">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Save Budget
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Edit Budget Modal -->
+<div class="modal fade" id="editBudgetModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Budget</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form id="edit-budget-form" method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Budget Name</label>
+                        <input type="text" class="form-control" name="budget_name" id="edit_budget_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Budget Type</label>
+                        <select class="form-select" name="budget_type" id="edit_budget_type">
+                            <option value="overall">Overall Budget</option>
+                            <option value="category">Category Budget</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="edit_budget_category_wrapper">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="budget_category" id="edit_budget_category">
+
+                            {% for category in categories %}
+                            <option value="{{category.id}}">
+                                {{category.category_name}}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Budget Amount</label>
+                        <input type="number" class="form-control" name="budget_amount" id="edit_budget_amount">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Period</label>
+                        <select class="form-select" name="period" id="edit_budget_period">
+                            <option value="">Select period</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="fortnightly">Fortnightly</option>
+                            <option value="montly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="start_date" id="edit_budget_start">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date" id="edit_budget_end">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary w-100">
+                            Save Changes
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Disable Budget Modal -->
+<div class="modal fade" id="disableBudgetModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Disable Budget</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to diable this budget?
+            </div>
+
+            <div class="modal-footer">
+
+                <form id="disable-budget-form" method="POST" class="w-100">
+
+                    {% csrf_token %}
+
+                    <div class="d-flex justify-content-between">
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit" class="btn btn-danger" id="btn-disable-budget">
+                            Disable
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function toggleBudgetCategory(budgetType, categoryField) {
+
+        if (this.budgetType.value === 'category') {
+            this.categoryField.style.display = 'block';
+        } else {
+            this.categoryField.style.display = 'none';
+        }
+    }
+
+    document.getElementById('budget_type').addEventListener('change', function () {
+
+        const categoryField = document.getElementById('budget_category_wrapper');
+        const budgetType = document.getElementById('budget_type');
+
+        if (budgetType.value === 'category') {
+            categoryField.style.display = 'block';
+        } else {
+            categoryField.style.display = 'none';
+        }
+
+        toggleBudgetCategory(budgetType, categoryField)
+
+    });
+
+    document.getElementById('edit_budget_type').addEventListener('change', function () {
+
+        const categoryField = document.getElementById('edit_budget_category_wrapper');
+        const budgetType = document.getElementById('edit_budget_type');
+
+        if (budgetType.value === 'category') {
+            categoryField.style.display = 'block';
+        } else {
+            categoryField.style.display = 'none';
+        }
+        toggleBudgetCategory(budgetType, categoryField)
+
+    });
+
+    //Edit hook
+    document.querySelectorAll('.btn-edit').forEach(button => {
+        button.addEventListener('click', function () {
+            const budget_name = this.dataset.name;
+            const category = this.dataset.category;
+            const budget_amount = this.dataset.amount;
+            const period = this.dataset.period;
+            const start_date = this.dataset.start;
+            const end_date = this.dataset.end;
+            const budget_type = this.dataset.budgetType;
+            const action_url = this.dataset.action;
+
+
+            document.getElementById('edit_budget_name').value = budget_name;
+            document.getElementById('edit_budget_type').value = budget_type;
+            document.getElementById('edit_budget_category').value = String(category);
+            document.getElementById('edit_budget_amount').value = budget_amount;
+            document.getElementById('edit_budget_period').value = period;
+            document.getElementById('edit_budget_start').value = start_date;
+            document.getElementById('edit_budget_end').value = end_date;
+
+            document.getElementById('edit-budget-form').action = action_url;
+
+        })
+    })
+
+    //Disable hook
+    document.querySelectorAll('.btn-disable-confirm').forEach(button => {
+        button.addEventListener('click', function () {
+            const action_url = this.dataset.action;
+
+            document.getElementById('disable-budget-form').action = action_url;
+
+        });
+
+    });
+</script>
+{% endblock %}

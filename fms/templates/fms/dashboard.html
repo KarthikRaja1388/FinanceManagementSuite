@@ -240,44 +240,25 @@
                 <h5 class="section-title">
                     Budget Progress
                 </h5>
+                {% for budget_summary in budget_summaries %}
 
                 <div class="mb-4">
                     <div class="d-flex justify-content-between mb-2">
-                        <span>Food</span>
-                        <span>$420 / $500</span>
+                        <span>{{budget_summary.label}}</span>
+                        <span>${{budget_summary.spent_amount}} of ${{budget_summary.budget_amount}} used</span>
                     </div>
 
                     <div class="progress budget-progress">
-                        <div class="progress-bar" style="width:84%"></div>
+                        <div class="progress-bar" style="width:{{budget_summary.percentage_used}}%;"></div>
                     </div>
                 </div>
+                {% endfor %}
 
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Transport</span>
-                        <span>$180 / $300</span>
-                    </div>
 
-                    <div class="progress budget-progress">
-                        <div class="progress-bar bg-success" style="width:60%"></div>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Entertainment</span>
-                        <span>$240 / $250</span>
-                    </div>
-
-                    <div class="progress budget-progress">
-                        <div class="progress-bar bg-danger" style="width:96%"></div>
-                    </div>
-                </div>
-
-                <div class="alert alert-light border mt-4 mb-0">
-                    <strong>Insight:</strong><br>
-                    Your entertainment spending is close to the monthly limit.
-                </div>
+<!--                <div class="alert alert-light border mt-4 mb-0">-->
+<!--                    <strong>Insight:</strong><br>-->
+<!--                    Your entertainment spending is close to the monthly limit.-->
+<!--                </div>-->
 
             </div>
         </div>

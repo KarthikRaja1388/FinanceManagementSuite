@@ -66,6 +66,13 @@ body {
     background-color: rgba(25, 118, 210, 0.08);
 }
 
+.alert-container {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+
+}
+
 /* =========================
    LAYOUT
 ========================= */

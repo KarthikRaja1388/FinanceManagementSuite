@@ -76,24 +76,33 @@
                     </a>
                 </li>
 
-                <li class="nav-item {% if request.path == '/transaction' %}active{% endif %}">
-                    <a class="nav-link" href="{% url 'view_transactions' %}">
-                        <i class="fa-solid fa-receipt me-2"></i> Transactions
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'view_account' %}">
+                        <i class="fa-solid fa-wallet me-2"></i> Accounts
                     </a>
                 </li>
-
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'view_budget' %}">
+                        <i class="fa-solid fa-coins me-2"></i> Budget
+                    </a>
+                </li>
                 <li class="nav-item {% if request.path == '/category' %}active{% endif %}">
                     <a class="nav-link" href="{% url 'view_category' %}">
                         <i class="fa-solid fa-layer-group me-2"></i> Category
                     </a>
                 </li>
 
-
-                <li class="nav-item ">
-                    <a class="nav-link" href="{% url 'view_account' %}">
-                        <i class="fa-solid fa-wallet me-2"></i> Accounts
+                <li class="nav-item {% if request.path == '/transaction' %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'view_transactions' %}">
+                        <i class="fa-solid fa-receipt me-2"></i> Transactions
                     </a>
                 </li>
+                <li class="nav-item {% if request.path == '/shoppinglist' %}active{% endif %}">
+                    <a class="nav-link" href="">
+                        <i class="fa-solid fa-cart-shopping"></i> Shopiing List
+                    </a>
+                </li>
+
             </ul>
         </aside>
         {% endif %}
@@ -104,7 +113,7 @@
             <!-- Alerts -->
             {% if messages %}
             {% for message in messages %}
-            <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            <div class="alert alert-{{message.tags}} alert-dismissible fade show alert-container" role="alert">
                 {{ message|linebreaksbr }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>

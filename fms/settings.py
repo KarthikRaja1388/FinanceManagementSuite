@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'category.apps.CategoryConfig',
     'account.apps.AccountConfig',
     'transaction.apps.TransactionConfig',
+    'budget.apps.BudgetConfig',
 
 ]
 
