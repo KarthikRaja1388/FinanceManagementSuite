@@ -86,7 +86,11 @@ def view_shopping_items(request):
     total_items = shopping_items.count()
     purchased_count = shopping_items.filter(purchased=True).count()
     completion_percentage = ( round((purchased_count/total_items)*100) if total_items > 0 else 0)
-    return render(request, "shopping/shoppingitems.html", {"shopping_list": shoppinglist_obj, "shopping_items": shopping_items, "total_items":total_items, "purchased_count":purchased_count,"completion_percentage":completion_percentage})
+    total_price = sum(
+        item.item_price * item.quantity
+        for item in shopping_items
+    )
+    return render(request, "shopping/shoppingitems.html", {"shopping_list": shoppinglist_obj, "shopping_items": shopping_items, "total_items":total_items, "purchased_count":purchased_count,"completion_percentage":completion_percentage, "total_price": total_price})
 
 @login_required(login_url="login_page")
 def add_shopping_item(request, shopping_list_id:int):
@@ -141,9 +145,16 @@ def update_shopping_item(request, shopping_item_id:int):
         messages.success(request, "Item has been updated successfully!")
         return redirect("view_shopping_items" )
 
+@login_required(login_url="login_page")
 def toggle_item_purchased(request, shopping_item_id:int):
     item = get_object_or_404(ShoppingItem, id=shopping_item_id)
     item.purchased = not item.purchased
     item.save()
+    return redirect("view_shopping_items")
 
+@login_required(login_url="login_page")
+def delete_item(request, shopping_item_id:int):
+    item = get_object_or_404(ShoppingItem, id=shopping_item_id)
+    item.delete()
+    messages.warning(request, "Item has been deleted!")
     return redirect("view_shopping_items")

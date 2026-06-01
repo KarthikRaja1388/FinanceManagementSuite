@@ -9,7 +9,6 @@
 
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-start mb-3">
-
         <div>
 
             <a href="{% url 'view_shopping_list' %}" class="text-muted text-decoration-none">
@@ -33,7 +32,7 @@
         </button>
 
     </div>
-
+    {% if shopping_items %}
     <!-- SUMMARY  -->
     <div class="row g-3 mb-4">
 
@@ -81,8 +80,8 @@
             </div>
 
         </div>
-
     </div>
+
 
     <!-- PROGRESS -->
     <div class="card border-0 shadow-sm mb-3">
@@ -102,6 +101,7 @@
             </div>
 
         </div>
+    {% endif %}
 
     </div>
 
@@ -141,7 +141,7 @@
                             Qty {{ item.quantity|default:"1" }}
 
                             {% if item.item_price %}
-                            • ${{ item.item_price  }}
+                            • ${{ total_price }}
                             {% endif %}
 
                         </div>
@@ -175,7 +175,7 @@
 
                         <li>
 
-                            <button class="dropdown-item text-danger btn-delete-item" data-action=""
+                            <button class="dropdown-item text-danger btn-delete-item" data-name="{{ item.item_name }}" data-action="{% url 'delete_item' item.id %}"
                                 data-bs-toggle="modal" data-bs-target="#deleteItemModal">
 
                                 Delete
@@ -308,8 +308,7 @@
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <div class="modal-body">
-                Are you sure?
+            <div class="modal-body" id="delete_confirmation_msg">
             </div>
 
             <div class="modal-footer">
@@ -357,8 +356,10 @@
 
     document.querySelectorAll('.btn-delete-item').forEach(btn => {
 
-        btn.addEventListener('click', function () {
+            btn.addEventListener('click', function () {
+        const item_name = this.dataset.name;
 
+    document.getElementById('delete_confirmation_msg').innerHTML = `Are you sure, you want to delete <b>${item_name}</b> from list?`
             document.getElementById('deleteItemForm').action = this.dataset.action;
 
         });
