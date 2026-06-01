@@ -153,5 +153,4 @@ def get_budget_summary(user):
             "percentage_used":percentage_used
 
         })
-        print(budget_summary)
     return budget_summary
