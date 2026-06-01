@@ -1,0 +1,370 @@
+{% extends 'fms/base.html' %}
+{% load static %}
+
+{% block title %}Shopping List Items{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid px-0">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-start mb-3">
+
+        <div>
+
+            <a href="{% url 'view_shopping_list' %}" class="text-muted text-decoration-none">
+                ← Back
+            </a>
+
+            <h4 class="fw-bold mt-2 mb-0">
+                {{ shopping_list.list_name }}
+            </h4>
+
+            <small class="text-muted">
+                {{ shopping_list.category.category_name|default:"No Category" }}
+            </small>
+
+        </div>
+
+        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+
+            + Add Item
+
+        </button>
+
+    </div>
+
+    <!-- SUMMARY  -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h4 class="fw-bold">{{ total_items }}</h4>
+                    <small class="text-muted">Total Items</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h4 class="fw-bold">{{ purchased_count }}</h4>
+                    <small class="text-muted">Purchased</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h4 class="fw-bold">${{ total_cost|default:"0.00" }}</h4>
+                    <small class="text-muted">Estimated Cost</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="card border-0 shadow-sm mb-3">
+
+        <div class="card-body py-2">
+
+            <div class="d-flex justify-content-between small mb-1">
+
+                <span>Progress</span>
+                <span>{{ purchased_count }}/{{ total_items }}</span>
+
+            </div>
+
+            <div class="progress" style="height: 6px;">
+                <div class="progress-bar" style="width: {{ completion_percentage }}%;">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ITEMS LIST  -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-2">
+
+            {% for item in shopping_items %}
+
+            <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+
+                <div class="d-flex align-items-center">
+
+                    <form method="POST" action="{% url 'toggle_item_purchased' item.id %}" class="me-2">
+
+                        {% csrf_token %}
+
+                        <input type="checkbox" onchange="this.form.submit()" {% if item.purchased %}checked{% endif %}>
+
+                    </form>
+
+                    <div>
+
+                        <div class="small fw-semibold">
+
+                            {% if item.purchased %}
+                            <del>{{ item.item_name }}</del>
+                            {% else %}
+                            {{ item.item_name }}
+                            {% endif %}
+
+                        </div>
+
+                        <div class="text-muted" style="font-size: 12px;">
+
+                            Qty {{ item.quantity|default:"1" }}
+
+                            {% if item.item_price %}
+                            • ${{ item.item_price  }}
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="dropdown">
+
+                    <button class="btn btn-sm btn-light py-0 px-2" data-bs-toggle="dropdown">
+
+                        ⋮
+
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+
+                            <button class="dropdown-item btn-edit-item" data-id="{{ item.id }}"
+                                data-name="{{ item.item_name }}" data-quantity="{{ item.quantity }}"
+                                data-price="{{ item.item_price }}" data-action="{% url 'update_shopping_item' item.id %}" data-bs-toggle="modal"
+                                data-bs-target="#editItemModal">
+
+                                Edit
+
+                            </button>
+
+                        </li>
+
+                        <li>
+
+                            <button class="dropdown-item text-danger btn-delete-item" data-action=""
+                                data-bs-toggle="modal" data-bs-target="#deleteItemModal">
+
+                                Delete
+
+                            </button>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="text-center text-muted py-4">
+
+                No items yet
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ADD ITEM MODAL -->
+<div class="modal fade" id="addItemModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <form method="POST" action="{% url 'add_shopping_item' shopping_list.id %}">
+
+                {% csrf_token %}
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">Add Item</h5>
+
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="text" name="item_name" class="form-control mb-2" placeholder="Item name" required>
+
+                    <input type="number" name="quantity" class="form-control mb-2" value="1" placeholder="Quantity">
+
+                    <input type="number" step="0.01" name="item_price" class="form-control" placeholder="Price">
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button class="btn btn-primary w-100">
+                        Save
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal fade" id="editItemModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <form method="POST" id="editItemForm">
+
+                {% csrf_token %}
+
+                <div class="modal-header">
+
+                    <h5>Edit Item</h5>
+
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="text" id="edit_item_name" name="item_name" class="form-control mb-2">
+
+                    <input type="number" id="edit_quantity" name="quantity" class="form-control mb-2">
+
+                    <input type="number" step="0.01" id="edit_price" name="item_price" class="form-control">
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button class="btn btn-primary w-100">
+                        Update
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteItemModal" tabindex="-1">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5>Delete Item</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure?
+            </div>
+
+            <div class="modal-footer">
+
+                <form method="POST" id="deleteItemForm">
+
+                    {% csrf_token %}
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button class="btn btn-danger">
+                        Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- JS -->
+<script>
+
+    document.querySelectorAll('.btn-edit-item').forEach(btn => {
+
+        btn.addEventListener('click', function () {
+
+            document.getElementById('edit_item_name').value = this.dataset.name;
+            document.getElementById('edit_quantity').value = this.dataset.quantity;
+            document.getElementById('edit_price').value = this.dataset.price;
+
+            document.getElementById('editItemForm').action = this.dataset.action;
+
+        });
+
+    });
+
+    document.querySelectorAll('.btn-delete-item').forEach(btn => {
+
+        btn.addEventListener('click', function () {
+
+            document.getElementById('deleteItemForm').action = this.dataset.action;
+
+        });
+
+    });
+
+</script>
+
+{% endblock %}

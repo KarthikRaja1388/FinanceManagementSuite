@@ -1,7 +1,7 @@
 from sys import is_stack_trampoline_active
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, DecimalField
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
@@ -9,7 +9,6 @@ from budget.models import Budget
 from budget.utils import get_spent_amount, get_budget_percentage_used, get_budget_remaining_amount
 from category.models import Category
 from identity.utils import get_admin_user
-from transaction.models import Transaction
 
 
 @login_required(login_url="login_page")
@@ -99,7 +98,6 @@ def update_budget(request, budget_id:int):
         new_start_date = request.POST.get('start_date')
         new_end_date = request.POST.get('end_date')
 
-        print(new_start_date, new_end_date, new_budget_name, new_budget_amount)
         fields = {
             "Budget Name": new_budget_name,
             "Budget Amount": new_budget_amount,
@@ -142,7 +140,6 @@ def update_budget(request, budget_id:int):
 
 def disable_budget(request, budget_id:int):
     budget_for_id = get_object_or_404(Budget, id=budget_id, added_by=get_admin_user(request.user))
-    print(budget_for_id)
     budget_name = budget_for_id.budget_name
     budget_for_id.is_active = False
     budget_for_id.save()
