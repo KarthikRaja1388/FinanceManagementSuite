@@ -1,0 +1,252 @@
+{% extends 'fms/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'fms/css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'fms/css/analytics.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+
+    <!-- FILTER HEADER (same style as dashboard) -->
+    <div class="dashboard-card p-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div>
+                <h5 class="section-title mb-1">Analytics Overview</h5>
+                <small class="text-muted">Deep insights into your financial behaviour</small>
+            </div>
+
+            <form method="GET" class="d-flex align-items-center gap-2">
+
+                <select name="range" class="form-select w-auto" onchange="this.form.submit()">
+                    <option value="month" {% if selected_range == 'month' %}selected{% endif %}>This Month</option>
+                    <option value="3months" {% if selected_range == '3months' %}selected{% endif %}>Last 3 Months</option>
+                    <option value="year" {% if selected_range == 'year' %}selected{% endif %}>This Year</option>
+                </select>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- KPI ROW (same summary-card system) -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="dashboard-card summary-card h-100">
+                <div class="summary-title">Avg Daily Spend</div>
+                <div class="summary-value">${{average_daily_spend}}</div>
+                <small class="text-muted">Based on selected period</small>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="dashboard-card summary-card h-100">
+                <div class="summary-title">Highest Expense Day</div>
+                <div class="summary-value text-danger">${{highest_spend_value}}</div>
+                <small class="text-muted">{{highest_spend_day}}</small>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="dashboard-card summary-card h-100">
+                <div class="summary-title">Most Used Category</div>
+                <div class="summary-value">${{top_category_amount}}<small style="font-size:12px;" class="text-muted">
+                        spent</small></div>
+                <small class="text-muted">{{top_category}} </small>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="dashboard-card summary-card h-100">
+                <div class="summary-title">Savings Rate</div>
+                <div class="summary-value" style="color:#6f42c1;">
+                    {{savings_rate}}%
+                </div>
+                <small class="text-muted">Income retained</small>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- CHART ROW 1 -->
+    <div class="row g-4 mb-4">
+
+        <!-- SPENDING TREND -->
+        <div class="col-lg-8">
+            <div class="dashboard-card p-4 h-100">
+
+                <h5 class="section-title mb-3">Spending Trend</h5>
+
+                <div class="chart-container">
+                    <canvas id="spendingTrendChart"></canvas>
+
+                    {% if not m_spend_data %}
+                    <div class="chart-empty-overlay w-100">
+                        <div class="row text-center">
+                            <div style="font-size:64px;">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <h5>No Data</h5>
+                            <p>No transactions for selected period</p>
+                        </div>
+
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- CATEGORY BREAKDOWN -->
+        <div class="col-lg-4">
+            <div class="dashboard-card p-4 h-100">
+
+                <h5 class="section-title mb-3">Category Breakdown</h5>
+
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+
+                    {% if not category_data %}
+                    <div class="chart-empty-overlay">
+                        <div class="row text-center">
+                            <div style="font-size:64px;">
+                                <i class="fa-solid fa-chart-pie"></i>
+                            </div>
+                            <h5>No Data</h5>
+                            <p>No category data available</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- INSIGHTS SECTION -->
+    <div class="row g-4">
+
+        <div class="col-lg-6">
+            <div class="dashboard-card p-4">
+
+                <h5 class="section-title">📌 Spending Insight</h5>
+
+                <p class="mb-0 text-muted">
+                    {% if insight_message %}
+                    {{ insight_message }}
+                    {% else %}
+                    Not enough data to generate insights yet.
+                    {% endif %}
+                </p>
+
+            </div>
+        </div>
+
+
+        <div class="col-lg-6">
+            <div class="dashboard-card p-4">
+
+                <h5 class="section-title">⚠ Alerts</h5>
+
+                {% if alerts %}
+                {% for alert in alerts %}
+                <div class="mb-2 text-danger">
+                    • {{ alert }}
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-muted mb-0">No alerts for this period.</p>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CHARTS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const canvas = document.getElementById("spendingTrendChart");
+    if (!canvas) {
+        console.error("Canvas not found");
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    const trendLabels = {{m_spend_labels|safe }};
+    const trendData = {{ m_spend_data|safe }};
+
+    console.log("Labels:", trendLabels);
+    console.log("Data:", trendData);
+
+    const existing = Chart.getChart(canvas);
+    if (existing) existing.destroy();
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: trendLabels,
+            datasets: [{
+                label: 'Spending',
+                data: trendData,
+                borderColor: '#dc3545',
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+});
+
+
+      const catCtx = document.getElementById('categoryChart');
+
+        const catLabels = {{ category_labels| safe }};
+        const catData = {{ category_data| safe }};
+    
+        function generateColors(count) {
+            return Array.from({ length: count }, (_, i) => {
+                const hue = i * (360 / count);
+                return `hsl(${hue}, 70%, 55%)`;
+            });
+        }
+    
+        new Chart(catCtx, {
+            type: 'doughnut',
+            data: {
+                labels: catLabels,
+                datasets: [{
+                    data: catData,
+                    backgroundColor: generateColors(catLabels.length)
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+</script>
+
+{% endblock %}

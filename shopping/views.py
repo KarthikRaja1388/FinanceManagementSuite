@@ -8,6 +8,7 @@ from django.contrib import messages
 from category.models import Category
 from identity.utils import get_admin_user
 from shopping.models import ShoppingList, ShoppingItem
+from shopping.utils import get_total_amount_spent
 
 
 @login_required(login_url="login_page")
@@ -70,6 +71,8 @@ def complete_shoppinglist(request, shopping_list_id:int):
     shoppinglist_obj = get_object_or_404(ShoppingList, id=shopping_list_id)
     amount_spent = ShoppingList.objects.select_related("items").aggregate(amount_spent=Sum('item_price'))
 
+    shoppinglist_obj.objects.select_related("items")
+
     shoppinglist_obj.total_spent = amount_spent
     shoppinglist_obj.completed = True
     shoppinglist_obj.completed_at = timezone.now()
@@ -86,11 +89,8 @@ def view_shopping_items(request):
     total_items = shopping_items.count()
     purchased_count = shopping_items.filter(purchased=True).count()
     completion_percentage = ( round((purchased_count/total_items)*100) if total_items > 0 else 0)
-    total_price = sum(
-        item.item_price * item.quantity
-        for item in shopping_items
-    )
-    return render(request, "shopping/shoppingitems.html", {"shopping_list": shoppinglist_obj, "shopping_items": shopping_items, "total_items":total_items, "purchased_count":purchased_count,"completion_percentage":completion_percentage, "total_price": total_price})
+    total_amount_spent = get_total_amount_spent(shopping_items)
+    return render(request, "shopping/shoppingitems.html", {"shopping_list": shoppinglist_obj, "shopping_items": shopping_items, "total_items":total_items, "purchased_count":purchased_count,"completion_percentage":completion_percentage,"total_amount_spent":total_amount_spent})
 
 @login_required(login_url="login_page")
 def add_shopping_item(request, shopping_list_id:int):

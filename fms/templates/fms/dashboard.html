@@ -156,7 +156,7 @@
 
                 <div class="chart-container d-flex align-items-center justify-content-center">
                     <canvas id="expenseCategoryChart"></canvas>
-                    {% if not transactions %}
+                    {% if transactions.transaction_type != 'EXP' %}
                     <div class="text-center py-5 chart-empty-overlay">
 
                         <div class="text-center">

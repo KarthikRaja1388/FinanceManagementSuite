@@ -25,6 +25,10 @@ class ShoppingItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     purchased = models.BooleanField(default=False)
 
+    @property
+    def total_price(self):
+        return self.item_price * self.quantity
+
     class Meta:
         ordering = ['purchased', 'id']
 

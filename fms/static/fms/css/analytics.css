@@ -1,0 +1,12 @@
+/* analytics.css */
+
+.chart-container {
+    position: relative;
+    height: 320px;
+}
+
+.chart-empty-overlay {
+    position: absolute;
+    justify-content: center;
+    align-items:center;
+}
