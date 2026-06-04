@@ -68,43 +68,77 @@
         <!-- SIDEBAR -->
         <aside id="sidebarMenu" class="side-nav col-12 col-lg-2 collapse d-lg-block">
 
-            <ul class="navbar-nav p-2">
+    <ul class="navbar-nav p-1 mb-0">
 
-                <li class="nav-item {% if request.path == '/dashboard' %}active{% endif %}">
-                    <a class="nav-link " href="{% url 'view_dashboard' %}">
-                        <i class="fa-solid fa-chart-line me-2"></i> Dashboard
-                    </a>
-                </li>
+        <!-- 🟢 OVERVIEW -->
+        <li class="nav-item mb-1">
+            <small class="text-muted ms-2">OVERVIEW</small>
+        </li>
 
-                <li class="nav-item ">
-                    <a class="nav-link" href="{% url 'view_account' %}">
-                        <i class="fa-solid fa-wallet me-2"></i> Accounts
-                    </a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link" href="{% url 'view_budget' %}">
-                        <i class="fa-solid fa-coins me-2"></i> Budget
-                    </a>
-                </li>
-                <li class="nav-item {% if request.path == '/category' %}active{% endif %}">
-                    <a class="nav-link" href="{% url 'view_category' %}">
-                        <i class="fa-solid fa-layer-group me-2"></i> Category
-                    </a>
-                </li>
+        <li class="nav-item {% if request.path == '/dashboard/' %}active{% endif %}">
+            <a class="nav-link py-1" href="{% url 'view_dashboard' %}">
+                <i class="fa-solid fa-chart-line me-2"></i>Dashboard
+            </a>
+        </li>
+        <li class="nav-item {% if request.path == '/analytics/' %}active{% endif %}">
+            <a class="nav-link py-1" href="{% url 'view_analytics' %}">
+                <i class="fa-solid fa-chart-pie me-2"></i>Analytics
+            </a>
+        </li>
 
-                <li class="nav-item {% if request.path == '/transaction' %}active{% endif %}">
-                    <a class="nav-link" href="{% url 'view_transactions' %}">
-                        <i class="fa-solid fa-receipt me-2"></i> Transactions
-                    </a>
-                </li>
-                <li class="nav-item {% if request.path == '/shoppinglist' %}active{% endif %}">
-                    <a class="nav-link" href="{% url 'view_shopping_list' %}">
-                        <i class="fa-solid fa-cart-shopping"></i> Shopiing List
-                    </a>
-                </li>
+        <hr class="text-muted my-1">
 
-            </ul>
-        </aside>
+        <!-- 💰 FINANCE -->
+        <li class="nav-item mb-1">
+            <small class="text-muted ms-2">FINANCE</small>
+        </li>
+
+        <li class="nav-item {% if request.path == '/account/' %}active{% endif %}">
+            <a class="nav-link py-1" href="{% url 'view_account' %}">
+                <i class="fa-solid fa-wallet me-2"></i>Accounts
+            </a>
+        </li>
+
+        <li class="nav-item {% if request.path == '/transaction/' %}active{% endif %}">
+            <a class="nav-link py-1" href="{% url 'view_transactions' %}">
+                <i class="fa-solid fa-receipt me-2"></i>Transactions
+            </a>
+        </li>
+
+        <li class="nav-item {% if request.path == '/budget/' %}active{% endif %}">
+            <a class="nav-link py-1" href="{% url 'view_budget' %}">
+                <i class="fa-solid fa-coins me-2"></i>Budget
+            </a>
+        </li>
+
+        <hr class="text-muted my-1">
+
+        <!-- 🏷 ORGANIZATION -->
+        <li class="nav-item mb-1">
+            <small class="text-muted ms-2">ORGANIZATION</small>
+        </li>
+
+        <li class="nav-item {% if request.path == '/category/' %}active{% endif %}">
+            <a class="nav-link py-1" href="{% url 'view_category' %}">
+                <i class="fa-solid fa-layer-group me-2"></i>Category
+            </a>
+        </li>
+
+        <hr class="text-muted my-1">
+
+        <!-- 🛒 PLANNING -->
+        <li class="nav-item mb-1">
+            <small class="text-muted ms-2">PLANNING</small>
+        </li>
+
+        <li class="nav-item {% if request.path == '/shoppinglist/' %}active{% endif %}">
+            <a class="nav-link py-1" href="{% url 'view_shopping_list' %}">
+                <i class="fa-solid fa-cart-shopping me-2"></i>Shopping List
+            </a>
+        </li>
+
+    </ul>
+</aside>
         {% endif %}
 
         <!-- CONTENT -->

@@ -72,7 +72,7 @@
 
                 <div class="card-body text-center">
 
-                    <h4 class="fw-bold">${{ total_cost|default:"0.00" }}</h4>
+                    <h4 class="fw-bold">${{ total_amount_spent|default:"0.00" }}</h4>
                     <small class="text-muted">Estimated Cost</small>
 
                 </div>
@@ -141,7 +141,9 @@
                             Qty {{ item.quantity|default:"1" }}
 
                             {% if item.item_price %}
-                            • ${{ total_price }}
+                            • ${{ item.total_price }}
+                            {% else %}
+                            • $0
                             {% endif %}
 
                         </div>
@@ -199,6 +201,7 @@
             </div>
 
             {% endfor %}
+
 
         </div>
 
