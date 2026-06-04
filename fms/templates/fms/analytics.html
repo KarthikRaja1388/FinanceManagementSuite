@@ -139,7 +139,7 @@
         <div class="col-lg-6">
             <div class="dashboard-card p-4">
 
-                <h5 class="section-title">📌 Spending Insight</h5>
+                <h5 class="section-title"><i class="fa-solid fa-thumbtack text-danger" style="transform:rotate(30deg);"></i> Spending Insight</h5>
 
                 <p class="mb-0 text-muted">
                     {% if insight_message %}
@@ -156,12 +156,12 @@
         <div class="col-lg-6">
             <div class="dashboard-card p-4">
 
-                <h5 class="section-title">⚠ Alerts</h5>
+                <h5 class="section-title"><i class="fa-solid fa-triangle-exclamation text-danger"></i> Alerts</h5>
 
                 {% if alerts %}
                 {% for alert in alerts %}
-                <div class="mb-2 text-danger">
-                    • {{ alert }}
+                <div class="mb-2 {% if alert.alert_type == 'negative' %}text-danger {% else %} text-success {% endif %} bg-dark alert">
+                    <small>• {{ alert.message|safe }}</small>
                 </div>
                 {% endfor %}
                 {% else %}

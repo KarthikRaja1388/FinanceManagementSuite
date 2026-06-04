@@ -4,7 +4,7 @@ from django.db.models.aggregates import Sum
 
 from django.shortcuts import render
 
-from budget.utils import alert_budget_exceeded
+from budget.utils import get_alerts
 from shopping.utils import get_most_used_category, get_weekly_spend, get_monthly_spend
 from transaction.models import Transaction
 from .utils import (get_current_balance, get_total_income, get_total_expense, get_total_savings, get_this_week_range,
@@ -89,11 +89,11 @@ def view_analytics(request):
     else:
         m_spend_labels, m_spend_data = get_monthly_spend(account_admin,start_date, end_date)
 
-    alerts = alert_budget_exceeded(account_admin)
+    alerts = get_alerts(account_admin)
 
     return render(request, "fms/analytics.html", {"selected_range": selected_range,"average_daily_spend":average_daily_spend,
                                                   "highest_spend_day":highest_spend_day,"highest_spend_value":highest_spend_value,
                                                   "top_category":top_category,"top_category_amount":top_category_amount,
                                                   "savings_rate":savings_rate,"m_spend_labels":m_spend_labels,
                                                   "m_spend_data":m_spend_data,"category_labels":category_labels,
-                                                  "category_data":category_data})
+                                                  "category_data":category_data, "alerts":alerts})
