@@ -139,15 +139,17 @@
         <div class="col-lg-6">
             <div class="dashboard-card p-4">
 
-                <h5 class="section-title">📌 Spending Insight</h5>
+                <h5 class="section-title"><i class="fa-solid fa-thumbtack text-danger" style="transform:rotate(30deg);"></i> Spending Insight</h5>
 
-                <p class="mb-0 text-muted">
-                    {% if insight_message %}
-                    {{ insight_message }}
+                <div class="mb-2 ">
+                    {% if insight_messages %}
+                    {% for insight in insight_messages %}
+                        <small><i class="fa-solid fa-circle-dot" style="font-size:8px;"></i> {{ insight.message|safe}}</small>
+                    {% endfor %}
                     {% else %}
                     Not enough data to generate insights yet.
                     {% endif %}
-                </p>
+                </div>
 
             </div>
         </div>
@@ -156,12 +158,12 @@
         <div class="col-lg-6">
             <div class="dashboard-card p-4">
 
-                <h5 class="section-title">⚠ Alerts</h5>
+                <h5 class="section-title"><i class="fa-solid fa-triangle-exclamation text-danger"></i> Alerts</h5>
 
                 {% if alerts %}
                 {% for alert in alerts %}
-                <div class="mb-2 text-danger">
-                    • {{ alert }}
+                <div class="mb-2 {% if alert.alert_type == 'negative' %}text-danger {% elif alert.alert_type == 'warning' %} text-warning {% else %} text-success {% endif %} bg-dark alert">
+                    <small>• {{ alert.message|safe }}</small>
                 </div>
                 {% endfor %}
                 {% else %}
