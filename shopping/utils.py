@@ -1,9 +1,8 @@
 from collections import defaultdict
 
 from django.db.models.aggregates import Count, Sum
-from django.db.models.functions import Trunc, TruncDay, TruncWeek, TruncMonth
+from django.db.models.functions import TruncWeek, TruncMonth
 
-from budget.models import Budget
 from transaction.models import Transaction
 
 
@@ -19,12 +18,10 @@ def get_most_used_category(user, start_date, end_date):
     transaction = (Transaction.objects.filter(account_admin=user,transaction_date__range=(start_date, end_date), transaction_type="EXP")
                    .values('category__category_name')
                    .annotate(used=Count('id'), total_amount=Sum('amount'))
-                   .order_by('-used')
-                   .first())
+                   .order_by('-total_amount')
+                   .first()
+                   )
     return transaction
-
-from django.db.models.functions import TruncWeek
-from django.db.models import Sum
 
 def get_weekly_spend(user, start_date, end_date):
     weekly_spend = (

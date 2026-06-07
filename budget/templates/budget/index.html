@@ -53,9 +53,9 @@
                     {% if budget.percentage_used < 80 %} <span class="badge bg-success">On Track</span>
                         {% elif budget.percentage_used < 100 %} <span class="badge bg-warning text-dark">Near
                             Limit</span>
-                            {% else %}
-                            <span class="badge bg-danger">Exceeded</span>
-                            {% endif %}
+                            {% elif budget.percentage_used == 100 %} <span class="badge bg-danger text-light">Limit
+                                reached</span>
+                            {% else %} <span class="badge bg-danger">Exceeded</span> {% endif %}
 
                 </div>
 

@@ -1,4 +1,4 @@
-from sys import is_stack_trampoline_active
+from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -89,6 +89,7 @@ def add_budget(request):
 @login_required(login_url="login_page")
 def update_budget(request, budget_id:int):
     budget_for_id = get_object_or_404(Budget, id=budget_id, added_by=get_admin_user(request.user))
+
     if request.method == 'POST':
         new_budget_name = request.POST.get('budget_name')
         new_period = request.POST.get('period')
@@ -112,7 +113,6 @@ def update_budget(request, budget_id:int):
             for field_name, value in fields.items()
             if not value
         ]
-
         if missing_fields:
             messages.warning(request, f"Required fields missing: {', '.join(missing_fields)}")
             return redirect("view_budget")
@@ -125,7 +125,7 @@ def update_budget(request, budget_id:int):
             budget_for_id.budget_name = new_budget_name
             budget_for_id.budget_amount = new_budget_amount
             budget_for_id.budget_type = new_budget_type
-            budget_for_id.category = new_budget_category
+            budget_for_id.category.id = new_budget_category
             budget_for_id.period = new_period
             budget_for_id.start_date = new_start_date
             budget_for_id.end_date = new_end_date
@@ -135,7 +135,7 @@ def update_budget(request, budget_id:int):
             return redirect("view_budget")
 
         except Exception as e:
-            messages.warning(request, "Unable to update the budget")
+            messages.warning(request, f"Something went wrong. Unable to update the budget")
             return redirect("view_budget")
 
 def disable_budget(request, budget_id:int):

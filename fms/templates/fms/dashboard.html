@@ -156,7 +156,7 @@
 
                 <div class="chart-container d-flex align-items-center justify-content-center">
                     <canvas id="expenseCategoryChart"></canvas>
-                    {% if transactions.transaction_type != 'EXP' %}
+                    {% if not transactions %}
                     <div class="text-center py-5 chart-empty-overlay">
 
                         <div class="text-center">
@@ -249,7 +249,14 @@
                     </div>
 
                     <div class="progress budget-progress">
-                        <div class="progress-bar" style="width:{{budget_summary.percentage_used}}%;"></div>
+                        <div class="progress-bar
+                            {% if budget_summary.percentage_used < 80 %}
+                                bg-success
+                            {% elif budget_summary.percentage_used < 100 %}
+                                bg-warning
+                            {% else %}
+                                bg-danger
+                            {% endif %} " style="width:{{budget_summary.percentage_used}}%;"></div>
                     </div>
                 </div>
                 {% endfor %}
